@@ -10,7 +10,7 @@ const PostForm = ({ post }) => {
     useForm({
       defaultValues: {
         title: post?.title || "",
-        slug: post?.slug || "",
+        slug: post?.$id || "",
         content: post?.content || "",
         status: post?.status || "active",
       },
@@ -19,9 +19,10 @@ const PostForm = ({ post }) => {
   const userData = useSelector((state) => state.userData);
 
   const submit = async (data) => {
+    console.log("handle submit click");
     if (post) {
       const file = data.image[0]
-        ? appwriteServices.uploadFile(data.image[0])
+        ? await appwriteServices.uploadFile(data.image[0])
         : null;
       if (file) {
         appwriteServices.deletefile(post.featuredImage);
@@ -31,18 +32,16 @@ const PostForm = ({ post }) => {
         featuredImage: file ? file.$id : undefined,
       });
       if (dbPost) {
-        navigate(`/post/${dbPost.id}`);
+        navigate(`/post/${dbPost.$id}`);
       }
     } else {
-      const file = (await data.image[0])
-        ? appwriteServices.uploadFile(data.image[0])
-        : null;
+      const file = await appwriteServices.uploadFile(data.image[0]);
       if (file) {
-        const fileID = file.$id;
-        data.featuredImage = fileID;
+        const fileId = file.$id;
+        data.featuredImage = fileId;
         const dbPost = await appwriteServices.createPost({
           ...data,
-          userId: userData.$id,
+          userId: userData.$id
         });
         if (dbPost) {
           navigate(`/post/${dbPost.$id}`);
@@ -56,7 +55,7 @@ const PostForm = ({ post }) => {
       return value
         .trim()
         .toLowerCase()
-        .replace(/^[a-zA-Z\d\s]+/g, "-")
+        .replace(/[^a-zA-Z\d\s]+/g, "-")
         .replace(/\s/g, "-");
     }
     return "";
@@ -65,7 +64,7 @@ const PostForm = ({ post }) => {
   useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (name === "title") {
-        setValue("slug", slugTransForm(value.title, { shouldValidate: true }));
+        setValue("slug", slugTransForm(value.title), { shouldValidate: true });
       }
     });
     return () => {
@@ -127,15 +126,17 @@ const PostForm = ({ post }) => {
           options={["active", "inactive"]}
           label="Status"
           className="mb-4"
-          {...register("status",{
-            required: true
+          {...register("status", {
+            required: true,
           })}
         />
         <Button
           type="submit"
           bgColor={post ? "bg-green-500" : undefined}
           className="w-full"
-        >{post ? "Update" : "Submit"}</Button>
+        >
+          {post ? "Update" : "Submit"}
+        </Button>
       </div>
     </form>
   );
