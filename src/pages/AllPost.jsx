@@ -22,8 +22,8 @@ const AllPost = () => {
             <PostCard post={post} />
             </div>
           )) : <div className="text-xl flex gap-2">
-            <p>you haven't create any post yet for creating the post go to </p>
-            <Link to={'/add-post'} className="text-blue-600 font-semibold">Add post</Link>
+            <p className="font-semibold">you haven't create any post yet for creating the post go to </p>
+            <Link to={'/add-post'} className="text-blue-600 font-bold">Add post</Link>
 
           </div>}
         </div>

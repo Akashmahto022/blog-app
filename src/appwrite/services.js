@@ -24,12 +24,12 @@ export class Services {
           slug,
           content,
           featuredImage,
-          status,
+          status, 
           userId,
         }
       );
     } catch (error) {
-      console.log("Appwrite serive :: createPost :: error", error);
+      console.log("Appwrite serives :: createPost :: error", error);
     }
   }
 
@@ -73,7 +73,7 @@ export class Services {
             slug
         )
     } catch (error) {
-        console.log("Appwrite serive :: getPost :: error", error)
+        console.log("Appwrite serives :: getPost :: error", error)
     }
   }
   
